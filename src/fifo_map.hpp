@@ -91,7 +91,14 @@ class fifo_map_compare
     {
         m_keys->erase(key);
     }
-
+    /*
+    2020-09-30  added by hepwei
+    */
+    void set_key(std::unordered_map<Key, std::size_t>* keys, std::size_t timestamp)
+    {
+        m_keys = keys;
+        m_timestamp = timestamp;
+    }
   private:
     /// helper to access m_timestamp from fifo_map copy ctor,
     /// must have same number of template args as fifo_map
@@ -521,7 +528,17 @@ template <
     {
         return lhs.m_map >= rhs.m_map;
     }
-
+    /*
+    2020-09-30  added by hepwei  operator= overloading
+    */
+    fifo_map&  operator = (const fifo_map& other)
+    {
+        m_keys = other.m_keys;
+        m_map.clear();
+        m_map.insert(other.m_map.begin(), other.m_map.end());
+        m_compare.set_key(&m_keys, other.m_compare.m_timestamp);
+        return *this;
+    }
   private:
     /// the keys
     std::unordered_map<Key, std::size_t> m_keys;
